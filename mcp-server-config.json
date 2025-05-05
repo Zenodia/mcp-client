@@ -1,22 +1,15 @@
 {
   "systemPrompt": "Welcome to the SQLite Query and Internet Search Application!\nFeatures:\nSQLite Database Queries:\nConnect to your local SQLite database and run SQL queries.\nPerform operations such as retrieving, updating, deleting, and inserting data.\nView query results in a formatted table directly within the application.\nInternet Search Capabilities:\nExecute web searches using integrated search engines.\nRetrieve and display search results conveniently.\nFilter and sort results based on relevance, date, or source.",
   "llm": {
-    "provider": "openai",
-    "model": "gpt-4o-mini",
-    "api_key": "",
+    "provider": "nvidia",
+    "model": "nvdev/meta/llama-3.1-405b-instruct",
+    "api_key": "nvapi-your-nvidia-api-key",
     "temperature": 0.2
   },
   "mcpServers": {
-    "brave-search": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-      "env": {
-        "BRAVE_API_KEY": ""
-      }
-    },
-    "sqlite": {
-      "command": "uvx",
-      "args": ["mcp-server-sqlite", "--db-path", "test.db"]
-    }
+    "calculator": {
+      "command": "python",
+      "args": ["-m","mcp_server_calculator"]      
+    }    
   }
 }

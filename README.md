@@ -40,9 +40,9 @@ A **simple REST API** and **CLI client** to interact with [Model Context Protoco
    cd mcp-client
    ```
    
-3. Set the OPENAI_API_KEY environment variable:
+3. Set the NVIDIA_API_KEY environment variable:
    ```bash
-   export OPENAI_API_KEY=your-openai-api-key
+      export NVIDIA_API_KEY=your-openai-api-key
    ```
    You can also set the `OPENAI_API_KEY` in the [mcp-server-config.json](mcp-server-config.json) file.
 
@@ -50,12 +50,13 @@ A **simple REST API** and **CLI client** to interact with [Model Context Protoco
    e.g. `provider` can be `ollama` and `model` can be `llama3.2:3b`.
 
 
-4.Set the BRAVE_API_KEY environment variable:
-   ```bash
-   export BRAVE_API_KEY=your-brave-api-key
-   ```
-   You can also set the `BRAVE_API_KEY` in the [mcp-server-config.json](mcp-server-config.json) file.
-   You can get the free `BRAVE_API_KEY` from [Brave Search API](https://brave.com/search/api/).
+4. spin up locally hosted mcp server, reference to the setup of this ![mcp server called calculator]( https://mcpservers.org/servers/githejie/mcp-server-calculator)
+
+Open a seperate terminal, cd into zeno_mcp_client root folder and install following the above setup recommendataion 
+
+```python
+   python -m mcp_server_calculator
+```
 
 5. Running from the CLI:
    ```bash
@@ -64,12 +65,9 @@ A **simple REST API** and **CLI client** to interact with [Model Context Protoco
    To explore the available commands, use the `help` option. You can chat with LLM using `chat` command.
    Sample prompts:
    ```bash
-     What is the capital city of India?
+     what is 2.041 to the power of 3
     ```
-   ```bash
-     Search the most expensive product from database and find more details about it from amazon?
-    ```
-
+   
 6. Running from the REST API:
    ```bash
    uvicorn app:app --reload

@@ -18,6 +18,8 @@ from pydantic import BaseModel
 from jsonschema_pydantic import jsonschema_to_pydantic
 from langgraph.graph import add_messages
 from langgraph.managed import IsLastStep
+from colorama import Fore 
+from langchain_core.tools import tool
 
 CONFIG_FILE = 'mcp-server-config.json'
 
@@ -46,6 +48,7 @@ def create_mcp_tool(
 
     # Convert the input schema to a Pydantic model for validation
     input_model = jsonschema_to_pydantic(tool_schema.inputSchema)
+    #print(Fore.LIGHTCYAN_EX + " toolschema:\n",tool_schema, Fore.RESET)
 
     class McpTool(BaseTool):
         """McpTool class represents a tool that can execute operations asynchronously."""
@@ -65,13 +68,17 @@ def create_mcp_tool(
             async with stdio_client(self.mcp_server_params) as (read, write):
                 async with ClientSession(read, write) as session:
                     await session.initialize()  # Initialize the session
+                    #print(Fore.LIGHTMAGENTA_EX + "Kwargs = ", kwargs)
                     result = await session.call_tool(self.name, arguments=kwargs)
+                    #print(Fore.CYAN + "result from running MCPTool _arun >>> \n", type(result), result, Fore.RESET)
                     if result.isError:
                         # Raise an exception if there is an error in the tool call
                         raise ToolException(result.content)
+                    #print(type(result.content), result.content)
                     return result.content  # Return the result if no error
 
     return McpTool()
+
 
 
 async def convert_mcp_to_langchain_tools(server_params: List[StdioServerParameters]) -> List[BaseTool]:
@@ -79,9 +86,14 @@ async def convert_mcp_to_langchain_tools(server_params: List[StdioServerParamete
     langchain_tools = []
     # Retrieve tools from each server and add to the list
     for server_param in server_params:
+        #print(Fore.BLUE+"server_param =\n", server_params)
         tools = await get_mcp_tools(server_param)
+        #print( Fore.BLUE + "tools input schema :\n ", type(tools[0]), tools[0].name , tools[0].get_input_jsonschema(), tools[0].get_output_jsonschema())
+        #print("initiating test querying mcp server **calculator**  with test data '2**3' ")
+        output=await tools[0].ainvoke({"expression":"2**3"})
+        #print("output = successfully obtained result from mcp server **calculator ** \n ... result =" , output[0].text, Fore.RESET)
         langchain_tools.extend(tools)
-
+    #print(Fore.BLUE+"langchain_tools =\n", type(langchain_tools[0]), langchain_tools[0], Fore.RESET)
     return langchain_tools
 
 
