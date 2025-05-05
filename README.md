@@ -42,9 +42,9 @@ A **simple REST API** and **CLI client** to interact with [Model Context Protoco
    
 3. Set the NVIDIA_API_KEY environment variable:
    ```bash
-      export NVIDIA_API_KEY=your-openai-api-key
+      export NVIDIA_API_KEY=your-nvidia-api-key
    ```
-   You can also set the `OPENAI_API_KEY` in the [mcp-server-config.json](mcp-server-config.json) file.
+   You can also set the `NVIDIA_API_KEY` in the [mcp-server-config.json](mcp-server-config.json) file.
 
    You can also set the `provider` and `model` in the [mcp-server-config.json](mcp-server-config.json) file.
    e.g. `provider` can be `ollama` and `model` can be `llama3.2:3b`.
