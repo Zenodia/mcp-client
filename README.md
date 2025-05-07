@@ -58,6 +58,17 @@ Open a seperate terminal, cd into zeno_mcp_client root folder and install follow
    python -m mcp_server_calculator
 ```
 
+
+  "sqlagent": {
+      "command": "uv",
+      "args": [
+          "--directory",
+          "C:\\Users\\zcharpy\\Contacts\\create-python-server\\sqlagent",
+          "run",
+          "sqlagent"
+      ]
+  }
+
 5. Running from the CLI:
    ```bash
    uv run cli.py

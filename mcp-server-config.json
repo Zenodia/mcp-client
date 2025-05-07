@@ -3,13 +3,17 @@
   "llm": {
     "provider": "nvidia",
     "model": "nvdev/meta/llama-3.1-405b-instruct",
-    "api_key": "nvapi-your-nvidia-api-key",
+    "api_key": "nvapi-Your_NVIDIA_API_KEY",
     "temperature": 0.2
   },
   "mcpServers": {
     "calculator": {
       "command": "python",
       "args": ["-m","mcp_server_calculator"]      
-    }    
+    },
+    "sqlagent": {
+      "command": "C:\\Users\\zcharpy\\Contacts\\create-python-server\\.venv\\Scripts\\sqlagent", 
+      "args": ["run", "C:\\Users\\zcharpy\\Contacts\\create-python-server\\sqlagent"]      
+    }
   }
 }

@@ -41,7 +41,9 @@ llm_with_tool_structure=llm.with_structured_output(ToolFormat)
 prompt_template = """
 ### [INST]
 
-You are an expert in extracting relevant information in order to use a tool.
+You are an expert in extracting relevant information in order to use a tool. you will have access to 2 tools :
+1. calculate: this tool will take a natural user query, translate to math operations and then return the result
+2. sqlagent: this tool has the ability to query a geforce sample database with user gaming data in it. And it can take in a natural user query, create appropriate sql query against the database , execute the sql query and then return the result from the database.
 Your task is to extract the name of the tool as well as appropriate tool_input from the user input query.
 ------
 {input_query}
@@ -52,12 +54,21 @@ The output MUST always follow the below format :
 tool_name: the name of the tool that is going to be exeucted
 tool_input: extract appropriate information that we can send to the tool for processing
 '''
-Example:
+< Begining of Examples>
+-----------------
+example_1 :
 input_query : what is 2 times 10.2
-
 output:
 tool_name: calculate
 tool_input: 2*10.2
+-----------------
+example_2:
+input_query: show me top 3 of most popular games
+output:
+tool_name: sqlagent
+tool_input: can you show me top 3 most populate games?
+-----------------
+<END of Examples>
 
 Begin!
 
@@ -69,14 +80,6 @@ template=prompt_template,
 )
 
 extract_tool_inputs_chain = ( prompt | llm_with_tool_structure)
-
-async def output_to_invoke_tools(out, tool):
-    tool_name=out.tool_name
-    tool_input=out.tool_input
-    print(Fore.GREEN + " Using tool =", tool_name,"with tool_input=" ,tool_input)
-    output=await tool.ainvoke({"expression":tool_input})
-    tool_output=output[0].text
-    return tool_output
 
 
 async def list_tools() -> None:
@@ -98,13 +101,25 @@ async def simple_qa(user_message: str)-> str:
     server_params = create_server_parameters(server_config)
     langchain_tools = await convert_mcp_to_langchain_tools(server_params)
 
-    for tool in langchain_tools:
-        print(f"{tool.name}")
+    #for tool in langchain_tools:
+        #print(f"{tool.name}")
     #llm_with_calculator_tool=llm.bind_tools([langchain_tools[0]],tool_choice=langchain_tools[0].name)
     #output=await llm_with_calculator_tool.ainvoke(user_message)
     output=extract_tool_inputs_chain.invoke({"input_query":user_message})
     #print(Fore.YELLOW + " simple_qa output: ", type(output), output , Fore.RESET)
-    tool_output = await output_to_invoke_tools(output, langchain_tools[0])
+    tool_name=output.tool_name
+    tool_input=output.tool_input
+    print("------------- Agent selecting tools ----------------\n")
+    print(Fore.GREEN + " Using tool =", tool_name,"with tool_input=" ,tool_input)
+    if tool_name == "calculate":
+        out=await langchain_tools[0].ainvoke({"expression":tool_input})
+        tool_output=out[0].text
+    elif tool_name =="sqlagent":
+        out=await langchain_tools[1].ainvoke({"query":tool_input})
+        tool_output=out[0].text
+    else:
+        tool_output="not supported tool, currently only support **calculate** for math operations OR **sqlagent** for query against geforce sampel database."
+    print(Fore.WHITE + "------------- Tool execution output ----------------\n")
     print(Fore.YELLOW + "Response from LangChain Agent output: ", type(tool_output), tool_output , Fore.RESET)
     return tool_output
     
@@ -155,9 +170,6 @@ async def handle_chat_mode():
 
 async def query_response(input_messages: TypedDict, agent_executor: CompiledGraph) -> str:
     """Query the assistant and get a fully formed response."""
-    
-    output=routing_chain.invoke(input_messages)
-    print(output)
     
     collected_response = []
 

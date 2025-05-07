@@ -88,10 +88,17 @@ async def convert_mcp_to_langchain_tools(server_params: List[StdioServerParamete
     for server_param in server_params:
         #print(Fore.BLUE+"server_param =\n", server_params)
         tools = await get_mcp_tools(server_param)
-        #print( Fore.BLUE + "tools input schema :\n ", type(tools[0]), tools[0].name , tools[0].get_input_jsonschema(), tools[0].get_output_jsonschema())
-        #print("initiating test querying mcp server **calculator**  with test data '2**3' ")
-        output=await tools[0].ainvoke({"expression":"2**3"})
-        #print("output = successfully obtained result from mcp server **calculator ** \n ... result =" , output[0].text, Fore.RESET)
+        #print( Fore.LIGHTBLUE_EX + "tools input schema :\n ", type(tools[0]), tools[0].name , tools[0].get_input_jsonschema(), tools[0].get_output_jsonschema())
+        """
+        if tools[0].name=="calculate":
+            print(Fore.YELLOW+"initiating test querying **mcp server calculate**  with test query = '2**3' ")
+            output=await tools[0].ainvoke({"expression":"2**3"})
+            print("output = successfully obtained result from mcp server **calculator ** \n ... result =" , output[0].text, Fore.RESET)
+        elif tools[0].name=="sqlagent":            
+            print(Fore.MAGENTA +"initiating test querying **mcp server sqlagent**  with test query = 'show me all the table names' ")
+            output=await tools[0].ainvoke({"query":"show me all the table names"})
+            print("output = successfully obtained result from mcp server **sqlagent ** \n ... result =" , output, Fore.RESET)
+        """    
         langchain_tools.extend(tools)
     #print(Fore.BLUE+"langchain_tools =\n", type(langchain_tools[0]), langchain_tools[0], Fore.RESET)
     return langchain_tools
